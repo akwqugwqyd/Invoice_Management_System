@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f5f7f5">
+    <title>Invoice Management</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <script src="/static/app.js" defer></script>
+  </head>
+  <body>
+    <main class="app">
+      <header class="page-header">
+        <div>
+          <h1>Invoice Management</h1>
+        </div>
+      </header>
+
+      <nav class="stepper" aria-label="Three-step process">
+        <span class="stepper-item active" data-step="fetch"><i>1</i> Fetch invoice</span>
+        <span class="stepper-line"></span>
+        <span class="stepper-item" data-step="review"><i>2</i> Review OCR</span>
+        <span class="stepper-line"></span>
+        <span class="stepper-item" data-step="approve"><i>3</i> Approve JSON</span>
+      </nav>
+
+      <section class="panel fetch-panel" aria-label="Fetch invoices">
+        <div class="section-heading">
+          <button id="fetch-button" class="button button-primary" type="button">Fetch invoices</button>
+        </div>
+        <div id="invoice-list" class="invoice-list">
+          <p class="list-empty">Click Fetch invoices to get started.</p>
+        </div>
+      </section>
+
+      <section id="invoice-panel" class="panel invoice-panel" aria-labelledby="invoice-heading" hidden>
+        <div class="section-heading">
+          <span class="step-number">2</span>
+          <div><h2 id="invoice-heading">Review OCR</h2><p id="selected-label">Select an invoice above.</p></div>
+          <button id="process-button" class="button button-primary" type="button" disabled>Run OCR</button>
+        </div>
+
+        <div id="processing-card" class="processing-card" hidden>
+          <div class="processing-heading">
+            <span class="scanner" aria-hidden="true"><i></i><i></i><i></i></span>
+            <div><strong id="processing-title">Preparing invoice</strong><span id="processing-subtitle">Getting things ready for OCR...</span></div>
+            <strong id="progress-value" class="progress-value">0%</strong>
+          </div>
+          <div class="progress-track"><span id="progress-bar"></span></div>
+          <p id="processing-error" class="error-message" hidden></p>
+        </div>
+
+        <div id="review-content" class="review-content" hidden>
+          <div class="document-pane">
+            <h3>Original invoice</h3>
+            <iframe id="document-preview" title="Selected invoice document"></iframe>
+            <details class="ocr-text-details">
+              <summary>View OCR text</summary>
+              <pre id="raw-text"></pre>
+            </details>
+          </div>
+
+          <form id="review-form" class="fields-pane">
+            <h3>Extracted details</h3>
+            <p class="form-hint">Check and correct the OCR results before approving.</p>
+            <div class="field-grid">
+              <label class="field-group field-wide"><span>Vendor name *</span><input id="field-vendor" type="text" required></label>
+              <label class="field-group"><span>Invoice number *</span><input id="field-invoice" type="text" required></label>
+              <label class="field-group"><span>Vendor state</span><input id="field-state" type="text"></label>
+            </div>
+            <div class="items-heading">
+              <h3>Line items</h3>
+              <button id="add-item" class="text-button" type="button">+ Add item</button>
+            </div>
+            <div class="items-table-wrap">
+              <table class="items-table">
+                <thead><tr><th>Description</th><th>Qty</th><th>Unit price (INR)</th><th></th></tr></thead>
+                <tbody id="items-body"></tbody>
+              </table>
+              <p id="no-items" class="no-items" hidden>No items found. Add an item before approval.</p>
+            </div>
+            <button id="approve-button" class="button button-primary approve-button" type="submit">Approve invoice</button>
+            <p id="review-error" class="error-message" role="alert" hidden></p>
+            <section id="result-card" class="result-card" hidden>
+              <div class="result-heading"><strong>Approved JSON</strong><button id="send-result" class="button button-primary" type="button">Send JSON</button></div>
+              <p class="form-hint">Send returns the approved JSON to this page. To send externally, provide the destination API URL and its required payload format.</p>
+              <pre id="result-json" hidden></pre>
+              <button id="copy-result" class="button button-secondary" type="button" hidden>Copy</button>
+            </section>
+          </form>
+        </div>
+      </section>
+
+      <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    </main>
+  </body>
+</html>
