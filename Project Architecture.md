@@ -108,31 +108,31 @@ sequenceDiagram
     actor Reviewer
     participant UI as Browser UI
     participant API as FastAPI
-    participant Source as Sample invoice source
-    participant OCR as PyMuPDF and Tesseract
+    participant Source as Sample source
+    participant OCR as OCR tools
     participant DB as SQLite
 
-    UI->>API: POST /api/reset (page load)
+    UI->>API: Reset workflow on page load
     API->>DB: Clear invoice rows
     Reviewer->>UI: Click Fetch invoices
-    UI->>API: GET /api/source-invoices
-    API->>Source: GET sample invoice records
+    UI->>API: Request invoice list
+    API->>Source: Request sample records
     Source-->>API: IDs and PDF URLs
     API-->>UI: Available invoice list
     Reviewer->>UI: Select invoice and click Run OCR
-    UI->>API: POST /api/source-invoices/{id}/process
+    UI->>API: Start OCR for selected invoice
     API->>Source: Retrieve selected PDF
     Source-->>API: PDF bytes
     API->>OCR: Render pages and recognize text
     OCR-->>API: Recognized text
-    API->>DB: Save draft as needs_review
+    API->>DB: Save draft for review
     API-->>UI: OCR job status and draft
     Reviewer->>UI: Correct fields and approve
-    UI->>API: POST /api/invoices/{id}/approve
-    API->>DB: Save reviewed values as approved
-    API-->>UI: Approval response; display JSON
+    UI->>API: Submit approved invoice
+    API->>DB: Save reviewed values
+    API-->>UI: Approval response and JSON
     Reviewer->>UI: Click Send JSON
-    UI->>API: GET /api/invoices/{id}/result
+    UI->>API: Request approved result
     API->>DB: Read approved record
     API-->>UI: Approved JSON
 ```
